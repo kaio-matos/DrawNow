@@ -1,3 +1,9 @@
+import { Title } from "./styles";
+
 export default function Header() {
-  return <div></div>;
+  return (
+    <header>
+      <Title>DrawNow</Title>
+    </header>
+  );
 }

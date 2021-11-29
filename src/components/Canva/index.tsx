@@ -1,7 +1,9 @@
+import { Canvas } from "./styles";
+
 export default function Canva() {
   return (
     <div>
-      <canvas></canvas>
+      <Canvas></Canvas>
     </div>
   );
 }

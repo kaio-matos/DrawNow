@@ -1,42 +1,40 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Canvas } from "./styles";
-import { getMousePositionRelativeTo } from "./utils";
+import { getMousePositionRelativeTo, Screen } from "./utils";
 
 export default function Canva() {
   const [hold, setHold] = useState(false);
-  const [previousPosition, setPreviousPosition] = useState({ x: 0, y: 0 });
+  const [screen, setScreen] = useState<Screen>();
+  const canvasElement = useRef<HTMLCanvasElement>(null);
 
-  function draw(x: number, y: number, canvas: HTMLCanvasElement) {
-    const color = "#96ff92";
-    const width = 4;
+  useEffect(() => {
+    if (!canvasElement.current) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvasElement.current.getContext("2d");
     if (!ctx) return;
 
-    ctx.lineWidth = width;
-    ctx.strokeStyle = color;
+    const screen = new Screen(ctx);
+    screen?.configDraw(1, "#96ff92");
+    setScreen(screen);
+  }, [canvasElement]);
 
-    ctx.moveTo(previousPosition.x, previousPosition.y);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  }
-
-  function changePreviousPosition(x: number, y: number) {
-    if (previousPosition.x !== x || previousPosition.y !== y) {
-      setPreviousPosition({ x, y });
-    }
+  function draw(x: number, y: number) {
+    screen?.drawFreeLine({ x, y });
   }
 
   return (
     <div>
       <Canvas
+        ref={canvasElement}
         width="500px"
         height="500px"
         onMouseDown={(e) => {
           setHold(true);
-          setPreviousPosition(
-            getMousePositionRelativeTo(e.currentTarget, e.clientX, e.clientY)
-          );
+          const currentPostion = getMousePositionRelativeTo(e.currentTarget, {
+            x: e.clientX,
+            y: e.clientY,
+          });
+          screen?.savePreviousPosition(currentPostion);
         }}
         onMouseUp={(e) => {
           setHold(false);
@@ -44,14 +42,12 @@ export default function Canva() {
         onMouseMove={(e) => {
           if (!hold) return;
           const canvas = e.currentTarget;
-          const { x, y } = getMousePositionRelativeTo(
-            canvas,
-            e.clientX,
-            e.clientY
-          );
+          const { x, y } = getMousePositionRelativeTo(canvas, {
+            x: e.clientX,
+            y: e.clientY,
+          });
 
-          changePreviousPosition(x, y);
-          draw(x, y, canvas);
+          draw(x, y);
         }}
       ></Canvas>
     </div>

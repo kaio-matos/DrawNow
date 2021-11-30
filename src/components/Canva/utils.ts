@@ -40,6 +40,12 @@ export class Screen {
     this.savePreviousPosition({ x, y });
   }
 
+  drawStraightLine() {
+    this.ctx.moveTo(this.startPosition.x, this.startPosition.y);
+    this.ctx.lineTo(this.endPosition.x, this.endPosition.y);
+    this.ctx.stroke();
+  }
+
   drawLightBeam(to: Position) {
     this.ctx.moveTo(this.startPosition.x, this.startPosition.y);
     this.ctx.lineTo(to.x, to.y);

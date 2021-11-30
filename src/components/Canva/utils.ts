@@ -15,13 +15,15 @@ export function getMousePositionRelativeTo(
 
 export class Screen {
   ctx: CanvasRenderingContext2D;
+  startPosition: Position = { x: 0, y: 0 };
+  endPosition: Position = { x: 0, y: 0 };
   previousPosition: Position = { x: 0, y: 0 };
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
   }
 
-  configDraw(width: number, color: string) {
+  configLine(width: number, color: string) {
     this.ctx.lineWidth = width;
     this.ctx.strokeStyle = color;
   }
@@ -39,7 +41,7 @@ export class Screen {
   }
 
   drawLightBeam(to: Position) {
-    this.ctx.moveTo(this.previousPosition.x, this.previousPosition.y);
+    this.ctx.moveTo(this.startPosition.x, this.startPosition.y);
     this.ctx.lineTo(to.x, to.y);
     this.ctx.stroke();
   }

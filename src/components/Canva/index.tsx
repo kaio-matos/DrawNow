@@ -14,7 +14,7 @@ export default function Canva() {
     if (!ctx) return;
 
     const screen = new Screen(ctx);
-    screen?.configDraw(1, "#96ff92");
+    screen.configLine(1, "#96ff92");
     setScreen(screen);
   }, [canvasElement]);
 
@@ -30,14 +30,22 @@ export default function Canva() {
         height="500px"
         onMouseDown={(e) => {
           setHold(true);
-          const currentPostion = getMousePositionRelativeTo(e.currentTarget, {
+          const currentPosition = getMousePositionRelativeTo(e.currentTarget, {
             x: e.clientX,
             y: e.clientY,
           });
-          screen?.savePreviousPosition(currentPostion);
+          if (!screen) return;
+          screen.startPosition = currentPosition;
+          screen.savePreviousPosition(currentPosition);
         }}
         onMouseUp={(e) => {
           setHold(false);
+          const currentPosition = getMousePositionRelativeTo(e.currentTarget, {
+            x: e.clientX,
+            y: e.clientY,
+          });
+          if (!screen) return;
+          screen.endPosition = currentPosition;
         }}
         onMouseMove={(e) => {
           if (!hold) return;

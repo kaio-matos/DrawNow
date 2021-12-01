@@ -1,4 +1,4 @@
-import { Title } from "./styles";
+import { Title } from "../BaseComponents";
 
 export default function Header() {
   return (

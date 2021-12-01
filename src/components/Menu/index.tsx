@@ -1,23 +1,12 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { Button, Selector } from "../BaseComponents";
 
 interface MenuProps {
   items: string[];
+  label: string;
   onChange: (value: string) => void;
 }
-
-const Button = styled.button`
-  background-color: palevioletred;
-  border: none;
-  padding: 1em;
-  transition: 350ms;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #b8486d;
-    color: #fff;
-  }
-`;
 
 const MenuContainer = styled.div`
   position: relative;
@@ -39,7 +28,7 @@ const OptionsContainer = styled.div`
   }
 `;
 
-export default function Menu({ items, onChange }: MenuProps) {
+export default function Menu({ label, items, onChange }: MenuProps) {
   const [open, setOpen] = useState(false);
 
   function toggleMenu() {
@@ -48,7 +37,7 @@ export default function Menu({ items, onChange }: MenuProps) {
 
   return (
     <MenuContainer>
-      <Button onClick={toggleMenu}>Label</Button>
+      <Selector onClick={toggleMenu}>{label}</Selector>
 
       <OptionsContainer className={open ? "active" : ""}>
         {items.map((item) => (

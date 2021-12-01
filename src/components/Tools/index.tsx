@@ -1,10 +1,23 @@
 import Menu from "../Menu";
-import { Button } from "./styles";
+import { Button, Input } from "../BaseComponents";
+import styled from "styled-components";
+
+const ToolsContainer = styled.div`
+  display: flex;
+  position: fixed;
+  bottom: 0;
+
+  & button,
+  & input {
+    height: 3rem;
+  }
+`;
 
 export default function Tools() {
   return (
-    <div>
+    <ToolsContainer>
       <Menu
+        label="Line"
         items={["normal", "dashed"]}
         onChange={(value) => {
           console.log(value);
@@ -12,7 +25,7 @@ export default function Tools() {
       />
       <Button>Clear</Button>
       <Button>Eraser</Button>
-      <Button>Colors</Button>
-    </div>
+      <Input type="color" />
+    </ToolsContainer>
   );
 }

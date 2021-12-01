@@ -1,11 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas } from "./styles";
+import { Canvas, CanvasContainer } from "./styles";
 import { getMousePositionRelativeTo, Screen } from "./utils";
 
 export default function Canva() {
   const [hold, setHold] = useState(false);
   const [screen, setScreen] = useState<Screen>();
+  const [size, setSize] = useState({ width: 0, height: 0 });
   const canvasElement = useRef<HTMLCanvasElement>(null);
+  const canvasContainerElement = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function resizeDiv() {
+      if (canvasContainerElement.current) {
+        setSize({
+          width: canvasContainerElement.current.clientWidth,
+          height: canvasContainerElement.current.clientHeight,
+        });
+      }
+    }
+
+    resizeDiv();
+
+    window.addEventListener("resize", resizeDiv);
+    return () => window.removeEventListener("resize", resizeDiv);
+  }, []);
 
   useEffect(() => {
     if (!canvasElement.current) return;
@@ -23,11 +41,11 @@ export default function Canva() {
   }
 
   return (
-    <div>
+    <CanvasContainer ref={canvasContainerElement}>
       <Canvas
         ref={canvasElement}
-        width="500px"
-        height="500px"
+        width={size.width}
+        height={size.height}
         onMouseDown={(e) => {
           setHold(true);
           const currentPosition = getMousePositionRelativeTo(e.currentTarget, {
@@ -58,6 +76,6 @@ export default function Canva() {
           draw(x, y);
         }}
       ></Canvas>
-    </div>
+    </CanvasContainer>
   );
 }

@@ -23,9 +23,14 @@ export class Screen {
     this.ctx = ctx;
   }
 
-  configLine(width: number, color: string) {
+  configLine(width: number, color: string, dashed?: boolean) {
     this.ctx.lineWidth = width;
     this.ctx.strokeStyle = color;
+    if (dashed) {
+      this.ctx.setLineDash([5, 15]);
+    } else {
+      this.ctx.setLineDash([]);
+    }
   }
 
   savePreviousPosition({ x, y }: Position) {

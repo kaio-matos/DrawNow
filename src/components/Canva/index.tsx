@@ -9,12 +9,14 @@ export default function Canva() {
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvasContainerElement = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  function configResizeCanvas() {
+    const container = canvasContainerElement.current;
+
     function resizeDiv() {
-      if (canvasContainerElement.current) {
+      if (container) {
         setSize({
-          width: canvasContainerElement.current.clientWidth,
-          height: canvasContainerElement.current.clientHeight,
+          width: container.clientWidth,
+          height: container.clientHeight,
         });
       }
     }
@@ -23,9 +25,9 @@ export default function Canva() {
 
     window.addEventListener("resize", resizeDiv);
     return () => window.removeEventListener("resize", resizeDiv);
-  }, []);
+  }
 
-  useEffect(() => {
+  function configCanvas() {
     if (!canvasElement.current) return;
 
     const ctx = canvasElement.current.getContext("2d");
@@ -34,7 +36,10 @@ export default function Canva() {
     const screen = new Screen(ctx);
     screen.configLine(1, "#96ff92");
     setScreen(screen);
-  }, [canvasElement]);
+  }
+
+  useEffect(configResizeCanvas, []);
+  useEffect(configCanvas, [canvasElement, size]);
 
   function draw(x: number, y: number) {
     screen?.drawFreeLine({ x, y });

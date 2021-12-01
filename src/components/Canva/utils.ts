@@ -33,9 +33,11 @@ export class Screen {
   }
 
   drawFreeLine({ x, y }: Position) {
+    this.ctx.beginPath();
     this.ctx.moveTo(this.previousPosition.x, this.previousPosition.y);
     this.ctx.lineTo(x, y);
     this.ctx.stroke();
+    this.ctx.closePath();
 
     this.savePreviousPosition({ x, y });
   }

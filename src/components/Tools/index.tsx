@@ -1,6 +1,7 @@
 import Menu from "../Menu";
 import { Button, Input } from "../BaseComponents";
 import styled from "styled-components";
+import { useCanva } from "../../contexts/CanvaContext";
 
 const ToolsContainer = styled.div`
   display: flex;
@@ -14,18 +15,34 @@ const ToolsContainer = styled.div`
 `;
 
 export default function Tools() {
+  const { setLineConfig } = useCanva();
   return (
     <ToolsContainer>
       <Menu
         label="Line"
         items={["normal", "dashed"]}
         onChange={(value) => {
-          console.log(value);
+          if (value === "dashed") {
+            setLineConfig(({ width, color }) => {
+              return { width, color, dashed: true };
+            });
+          } else {
+            setLineConfig(({ width, color }) => {
+              return { width, color, dashed: false };
+            });
+          }
         }}
       />
       <Button>Clear</Button>
       <Button>Eraser</Button>
-      <Input type="color" />
+      <Input
+        type="color"
+        onChange={(e) => {
+          setLineConfig(({ width, dashed, color }) => {
+            return { width, dashed, color: e.currentTarget?.value };
+          });
+        }}
+      />
     </ToolsContainer>
   );
 }

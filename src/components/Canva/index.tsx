@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useCanva } from "../../contexts/CanvaContext";
 import { Canvas, CanvasContainer } from "./styles";
 import { getMousePositionRelativeTo, Screen } from "./utils";
 
@@ -8,6 +9,8 @@ export default function Canva() {
   const [size, setSize] = useState({ width: 0, height: 0 });
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvasContainerElement = useRef<HTMLDivElement>(null);
+
+  const { lineConfig } = useCanva();
 
   function configResizeCanvas() {
     const container = canvasContainerElement.current;
@@ -34,11 +37,14 @@ export default function Canva() {
     if (!ctx) return;
 
     const screen = new Screen(ctx);
-    screen.configLine(1, "#96ff92");
+    screen.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
     setScreen(screen);
   }
 
   useEffect(configResizeCanvas, []);
+  useEffect(() => {
+    screen?.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
+  }, [lineConfig]);
   useEffect(configCanvas, [canvasElement, size]);
 
   function draw(x: number, y: number) {

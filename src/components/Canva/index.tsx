@@ -1,16 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useCanva } from "../../contexts/CanvaContext";
 import { Canvas, CanvasContainer } from "./styles";
-import { getMousePositionRelativeTo, Screen } from "./utils";
+import { getMousePositionRelativeTo } from "./utils";
 
 export default function Canva() {
   const [hold, setHold] = useState(false);
-  const [screen, setScreen] = useState<Screen>();
   const [size, setSize] = useState({ width: 0, height: 0 });
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvasContainerElement = useRef<HTMLDivElement>(null);
-
-  const { lineConfig } = useCanva();
+  const {
+    screen,
+    createCanvas,
+    registerEndPosition,
+    registerStartPosition,
+    registerPreviousPosition,
+  } = useCanva();
 
   function configResizeCanvas() {
     const container = canvasContainerElement.current;
@@ -32,22 +36,40 @@ export default function Canva() {
 
   function configCanvas() {
     if (!canvasElement.current) return;
-
-    const ctx = canvasElement.current.getContext("2d");
-    if (!ctx) return;
-
-    const screen = new Screen(ctx);
-    screen.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
-    setScreen(screen);
+    createCanvas(canvasElement.current);
   }
 
   useEffect(configResizeCanvas, []);
-  useEffect(() => {
-    screen?.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
-  }, [lineConfig]);
   useEffect(configCanvas, [canvasElement, size]);
 
-  function draw(x: number, y: number) {
+  function StartClick(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+    setHold(true);
+    const currentPosition = getMousePositionRelativeTo(e.currentTarget, {
+      x: e.clientX,
+      y: e.clientY,
+    });
+    if (!screen) return;
+    registerStartPosition(currentPosition);
+    registerPreviousPosition(currentPosition);
+  }
+
+  function EndClick(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+    setHold(false);
+    const currentPosition = getMousePositionRelativeTo(e.currentTarget, {
+      x: e.clientX,
+      y: e.clientY,
+    });
+    registerEndPosition(currentPosition);
+  }
+
+  function HoldingClick(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+    if (!hold) return;
+    const canvas = e.currentTarget;
+    const { x, y } = getMousePositionRelativeTo(canvas, {
+      x: e.clientX,
+      y: e.clientY,
+    });
+
     screen?.drawFreeLine({ x, y });
   }
 
@@ -57,35 +79,9 @@ export default function Canva() {
         ref={canvasElement}
         width={size.width}
         height={size.height}
-        onMouseDown={(e) => {
-          setHold(true);
-          const currentPosition = getMousePositionRelativeTo(e.currentTarget, {
-            x: e.clientX,
-            y: e.clientY,
-          });
-          if (!screen) return;
-          screen.startPosition = currentPosition;
-          screen.savePreviousPosition(currentPosition);
-        }}
-        onMouseUp={(e) => {
-          setHold(false);
-          const currentPosition = getMousePositionRelativeTo(e.currentTarget, {
-            x: e.clientX,
-            y: e.clientY,
-          });
-          if (!screen) return;
-          screen.endPosition = currentPosition;
-        }}
-        onMouseMove={(e) => {
-          if (!hold) return;
-          const canvas = e.currentTarget;
-          const { x, y } = getMousePositionRelativeTo(canvas, {
-            x: e.clientX,
-            y: e.clientY,
-          });
-
-          draw(x, y);
-        }}
+        onMouseDown={StartClick}
+        onMouseUp={EndClick}
+        onMouseMove={HoldingClick}
       ></Canvas>
     </CanvasContainer>
   );

@@ -1,8 +1,21 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { Position } from "../types/types";
+import { Canvas } from "./CanvasClass";
 
 type CanvaContextData = {
   lineConfig: lineConfigType;
   setLineConfig: React.Dispatch<React.SetStateAction<lineConfigType>>;
+  createCanvas: (canvasElement: HTMLCanvasElement) => void;
+  screen: Canvas | undefined;
+  registerEndPosition: (pos: Position) => void;
+  registerStartPosition: (pos: Position) => void;
+  registerPreviousPosition: (pos: Position) => void;
 };
 
 type CanvaContextProviderProps = {
@@ -23,12 +36,47 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
     color: "black",
     dashed: false,
   });
+  const [screen, setScreen] = useState<Canvas>();
+
+  useEffect(() => {
+    screen?.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
+  }, [lineConfig]);
+
+  function createCanvas(canvasElement: HTMLCanvasElement) {
+    if (!canvasElement) return;
+
+    const ctx = canvasElement.getContext("2d");
+    if (!ctx) return;
+
+    const screen = new Canvas(ctx);
+    setScreen(screen);
+  }
+
+  function registerStartPosition(pos: Position) {
+    if (!screen) return;
+    screen.startPosition = pos;
+  }
+
+  function registerEndPosition(pos: Position) {
+    if (!screen) return;
+    screen.endPosition = pos;
+  }
+
+  function registerPreviousPosition(pos: Position) {
+    if (!screen) return;
+    screen.savePreviousPosition(pos);
+  }
 
   return (
     <CanvaContext.Provider
       value={{
         lineConfig,
         setLineConfig,
+        createCanvas,
+        screen,
+        registerEndPosition,
+        registerStartPosition,
+        registerPreviousPosition,
       }}
     >
       {children}

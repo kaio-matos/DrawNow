@@ -51,6 +51,15 @@ export default function Tools() {
           });
         }}
       />
+      <Input
+        type="number"
+        onChange={(e) => {
+          const width = Number(e.currentTarget?.value);
+          setLineConfig(({ color, dashed }) => {
+            return { width, dashed, color };
+          });
+        }}
+      />
     </ToolsContainer>
   );
 }

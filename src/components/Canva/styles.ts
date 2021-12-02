@@ -1,8 +1,6 @@
 import styled from "styled-components";
 
-export const Canvas = styled.canvas`
-  background-color: royalblue;
-`;
+export const Canvas = styled.canvas``;
 
 export const CanvasContainer = styled.div`
   display: flex;

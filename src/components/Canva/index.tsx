@@ -9,8 +9,8 @@ export default function Canva() {
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvasContainerElement = useRef<HTMLDivElement>(null);
   const {
-    screen,
     createCanvas,
+    screen,
     registerEndPosition,
     registerStartPosition,
     registerPreviousPosition,
@@ -21,10 +21,14 @@ export default function Canva() {
 
     function resizeDiv() {
       if (container) {
-        setSize({
+        const currentSize = {
           width: container.clientWidth,
           height: container.clientHeight,
-        });
+        };
+        setSize(currentSize);
+
+        if (!screen) return;
+        screen.size = currentSize;
       }
     }
 
@@ -39,8 +43,8 @@ export default function Canva() {
     createCanvas(canvasElement.current);
   }
 
-  useEffect(configResizeCanvas, []);
-  useEffect(configCanvas, [canvasElement, size]);
+  useEffect(configResizeCanvas, [screen]);
+  useEffect(configCanvas, [canvasElement]);
 
   function StartClick(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     setHold(true);

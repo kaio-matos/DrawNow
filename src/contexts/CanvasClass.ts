@@ -5,6 +5,8 @@ export class Canvas {
   startPosition: Position = { x: 0, y: 0 };
   endPosition: Position = { x: 0, y: 0 };
   previousPosition: Position = { x: 0, y: 0 };
+  size: { width: number; height: number } = { width: 0, height: 0 };
+  backgroundColor: string = "#fff";
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
@@ -22,6 +24,11 @@ export class Canvas {
 
   savePreviousPosition({ x, y }: Position) {
     this.previousPosition = { x, y };
+  }
+
+  clearCanvas() {
+    this.ctx.fillStyle = this.backgroundColor;
+    this.ctx.fillRect(0, 0, this.size.width, this.size.height);
   }
 
   drawFreeLine({ x, y }: Position) {

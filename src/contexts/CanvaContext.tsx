@@ -16,6 +16,7 @@ type CanvaContextData = {
   registerEndPosition: (pos: Position) => void;
   registerStartPosition: (pos: Position) => void;
   registerPreviousPosition: (pos: Position) => void;
+  clearScreen: () => void;
 };
 
 type CanvaContextProviderProps = {
@@ -43,8 +44,6 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
   }, [lineConfig]);
 
   function createCanvas(canvasElement: HTMLCanvasElement) {
-    if (!canvasElement) return;
-
     const ctx = canvasElement.getContext("2d");
     if (!ctx) return;
 
@@ -67,6 +66,11 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
     screen.savePreviousPosition(pos);
   }
 
+  function clearScreen() {
+    if (!screen) return;
+    screen.clearCanvas();
+  }
+
   return (
     <CanvaContext.Provider
       value={{
@@ -77,6 +81,7 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
         registerEndPosition,
         registerStartPosition,
         registerPreviousPosition,
+        clearScreen,
       }}
     >
       {children}

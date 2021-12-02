@@ -15,7 +15,7 @@ const ToolsContainer = styled.div`
 `;
 
 export default function Tools() {
-  const { setLineConfig } = useCanva();
+  const { setLineConfig, clearScreen } = useCanva();
   return (
     <ToolsContainer>
       <Menu
@@ -33,7 +33,7 @@ export default function Tools() {
           }
         }}
       />
-      <Button>Clear</Button>
+      <Button onClick={clearScreen}>Clear</Button>
       <Button>Eraser</Button>
       <Input
         type="color"

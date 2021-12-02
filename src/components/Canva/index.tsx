@@ -14,6 +14,7 @@ export default function Canva() {
     registerEndPosition,
     registerStartPosition,
     registerPreviousPosition,
+    draw,
   } = useCanva();
 
   function configResizeCanvas() {
@@ -74,7 +75,7 @@ export default function Canva() {
       y: e.clientY,
     });
 
-    screen?.drawFreeLine({ x, y });
+    draw({ x, y });
   }
 
   return (

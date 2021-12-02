@@ -31,6 +31,19 @@ export class Canvas {
     this.ctx.fillRect(0, 0, this.size.width, this.size.height);
   }
 
+  eraser({ x, y }: Position) {
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = this.backgroundColor;
+    this.ctx.lineWidth = 20;
+    this.ctx.setLineDash([]);
+    this.ctx.moveTo(this.previousPosition.x, this.previousPosition.y);
+    this.ctx.lineTo(x, y);
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    this.savePreviousPosition({ x, y });
+  }
+
   drawFreeLine({ x, y }: Position) {
     this.ctx.beginPath();
     this.ctx.moveTo(this.previousPosition.x, this.previousPosition.y);

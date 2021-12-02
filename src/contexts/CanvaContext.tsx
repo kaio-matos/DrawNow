@@ -17,6 +17,8 @@ type CanvaContextData = {
   registerStartPosition: (pos: Position) => void;
   registerPreviousPosition: (pos: Position) => void;
   clearScreen: () => void;
+  switchTool: (tool: "brush" | "eraser") => void;
+  draw: (pos: Position) => void;
 };
 
 type CanvaContextProviderProps = {
@@ -38,6 +40,7 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
     dashed: false,
   });
   const [screen, setScreen] = useState<Canvas>();
+  const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
 
   useEffect(() => {
     screen?.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
@@ -71,6 +74,24 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
     screen.clearCanvas();
   }
 
+  function switchTool(tool: "brush" | "eraser") {
+    setCurrentTool(tool);
+  }
+
+  function draw(pos: Position) {
+    switch (currentTool) {
+      case "brush":
+        screen?.drawFreeLine(pos);
+        break;
+      case "eraser":
+        screen?.eraser(pos);
+        break;
+      default:
+        screen?.drawFreeLine(pos);
+        break;
+    }
+  }
+
   return (
     <CanvaContext.Provider
       value={{
@@ -82,6 +103,8 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
         registerStartPosition,
         registerPreviousPosition,
         clearScreen,
+        switchTool,
+        draw,
       }}
     >
       {children}

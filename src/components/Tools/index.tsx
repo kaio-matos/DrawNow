@@ -15,13 +15,14 @@ const ToolsContainer = styled.div`
 `;
 
 export default function Tools() {
-  const { setLineConfig, clearScreen } = useCanva();
+  const { setLineConfig, clearScreen, switchTool } = useCanva();
   return (
     <ToolsContainer>
       <Menu
         label="Line"
         items={["normal", "dashed"]}
         onChange={(value) => {
+          switchTool("brush");
           if (value === "dashed") {
             setLineConfig(({ width, color }) => {
               return { width, color, dashed: true };
@@ -34,7 +35,13 @@ export default function Tools() {
         }}
       />
       <Button onClick={clearScreen}>Clear</Button>
-      <Button>Eraser</Button>
+      <Button
+        onClick={() => {
+          switchTool("eraser");
+        }}
+      >
+        Eraser
+      </Button>
       <Input
         type="color"
         onChange={(e) => {

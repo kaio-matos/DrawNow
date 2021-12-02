@@ -38,8 +38,9 @@ export default function Tools() {
       <Input
         type="color"
         onChange={(e) => {
-          setLineConfig(({ width, dashed, color }) => {
-            return { width, dashed, color: e.currentTarget?.value };
+          const color = e.currentTarget?.value;
+          setLineConfig(({ width, dashed }) => {
+            return { width, dashed, color };
           });
         }}
       />

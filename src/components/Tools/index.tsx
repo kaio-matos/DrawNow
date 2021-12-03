@@ -54,6 +54,7 @@ export default function Tools() {
       <Input
         type="number"
         defaultValue={lineConfig.width}
+        min={1}
         onChange={(e) => {
           const width = Number(e.currentTarget?.value);
           setLineConfig(({ color, dashed }) => {

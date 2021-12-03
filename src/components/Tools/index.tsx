@@ -15,7 +15,7 @@ const ToolsContainer = styled.div`
 `;
 
 export default function Tools() {
-  const { setLineConfig, clearScreen, switchTool } = useCanva();
+  const { lineConfig, setLineConfig, clearScreen, switchTool } = useCanva();
   return (
     <ToolsContainer>
       <Menu
@@ -53,6 +53,7 @@ export default function Tools() {
       />
       <Input
         type="number"
+        defaultValue={lineConfig.width}
         onChange={(e) => {
           const width = Number(e.currentTarget?.value);
           setLineConfig(({ color, dashed }) => {

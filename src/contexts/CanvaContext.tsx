@@ -35,7 +35,7 @@ export const CanvaContext = createContext({} as CanvaContextData);
 
 export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
   const [lineConfig, setLineConfig] = useState<lineConfigType>({
-    width: 1,
+    width: 10,
     color: "black",
     dashed: false,
   });
@@ -44,7 +44,7 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
 
   useEffect(() => {
     screen?.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
-  }, [lineConfig]);
+  }, [screen, lineConfig]);
 
   function createCanvas(canvasElement: HTMLCanvasElement) {
     const ctx = canvasElement.getContext("2d");

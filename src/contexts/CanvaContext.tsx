@@ -81,13 +81,13 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
   function draw(pos: Position) {
     switch (currentTool) {
       case "brush":
-        screen?.drawFreeLine(pos);
+        screen?.drawStandardLine(pos);
         break;
       case "eraser":
         screen?.eraser(pos);
         break;
       default:
-        screen?.drawFreeLine(pos);
+        screen?.drawStandardLine(pos);
         break;
     }
   }

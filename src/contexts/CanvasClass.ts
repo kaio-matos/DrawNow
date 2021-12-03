@@ -34,14 +34,24 @@ export class Canvas {
   eraser({ x, y }: Position) {
     this.ctx.beginPath();
     this.ctx.strokeStyle = this.backgroundColor;
-    this.ctx.lineWidth = 20;
     this.ctx.setLineDash([]);
-    this.ctx.moveTo(this.previousPosition.x, this.previousPosition.y);
-    this.ctx.lineTo(x, y);
-    this.ctx.stroke();
+    this.drawStandardLine({ x, y });
     this.ctx.closePath();
 
     this.savePreviousPosition({ x, y });
+  }
+
+  drawStandardLine({ x, y }: Position) {
+    if (this.ctx.getLineDash().length) {
+      this.ctx.beginPath();
+      this.drawFreeLine({ x, y });
+      this.ctx.closePath();
+    } else {
+      this.ctx.beginPath();
+      this.drawFreeLine({ x, y });
+      this.drawCircle({ x, y });
+      this.ctx.closePath();
+    }
   }
 
   drawFreeLine({ x, y }: Position) {
@@ -50,7 +60,6 @@ export class Canvas {
     this.ctx.lineTo(x, y);
     this.ctx.stroke();
     this.ctx.closePath();
-
     this.savePreviousPosition({ x, y });
   }
 
@@ -64,5 +73,23 @@ export class Canvas {
     this.ctx.moveTo(this.startPosition.x, this.startPosition.y);
     this.ctx.lineTo(to.x, to.y);
     this.ctx.stroke();
+  }
+
+  drawCircle({ x, y }: Position) {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = this.ctx.strokeStyle;
+    this.ctx.ellipse(
+      x,
+      y,
+      this.ctx.lineWidth / 2,
+      this.ctx.lineWidth / 2,
+      0,
+      0,
+      2 * Math.PI
+    );
+    this.ctx.fill();
+    this.ctx.closePath();
+
+    this.savePreviousPosition({ x, y });
   }
 }

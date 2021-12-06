@@ -2,6 +2,7 @@ import Menu from "../Menu";
 import { Button, Input } from "../BaseComponents";
 import styled from "styled-components";
 import { useCanva } from "../../contexts/CanvaContext";
+import { LineTypes, ToolTypes } from "../../types/types";
 
 const ToolsContainer = styled.div`
   display: flex;
@@ -15,39 +16,31 @@ const ToolsContainer = styled.div`
 `;
 
 export default function Tools() {
-  const { lineConfig, setLineConfig, clearScreen, switchTool } = useCanva();
+  const { lineConfig, setLineConfig, clearScreen, switchLineType, switchTool } =
+    useCanva();
   return (
     <ToolsContainer>
       <Menu
         label="Line"
         items={["normal", "dashed"]}
         onChange={(value) => {
-          switchTool("brush");
-          if (value === "dashed") {
-            setLineConfig(({ width, color }) => {
-              return { width, color, dashed: true };
-            });
-          } else {
-            setLineConfig(({ width, color }) => {
-              return { width, color, dashed: false };
-            });
-          }
+          switchLineType(value as LineTypes);
+        }}
+      />
+      <Menu
+        label="Tools"
+        items={["brush", "eraser", "circle", "rectangle"]}
+        onChange={(value) => {
+          switchTool(value as ToolTypes);
         }}
       />
       <Button onClick={clearScreen}>Clear</Button>
-      <Button
-        onClick={() => {
-          switchTool("eraser");
-        }}
-      >
-        Eraser
-      </Button>
       <Input
         type="color"
         onChange={(e) => {
           const color = e.currentTarget?.value;
-          setLineConfig(({ width, dashed }) => {
-            return { width, dashed, color };
+          setLineConfig(({ width }) => {
+            return { width, color };
           });
         }}
       />
@@ -57,8 +50,8 @@ export default function Tools() {
         min={1}
         onChange={(e) => {
           const width = Number(e.currentTarget?.value);
-          setLineConfig(({ color, dashed }) => {
-            return { width, dashed, color };
+          setLineConfig(({ color }) => {
+            return { width, color };
           });
         }}
       />

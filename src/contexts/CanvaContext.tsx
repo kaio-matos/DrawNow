@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Position } from "../types/types";
+import { Position, LineTypes, ToolTypes } from "../types/types";
 import { Canvas } from "./CanvasClass";
 
 type CanvaContextData = {
@@ -17,7 +17,9 @@ type CanvaContextData = {
   registerStartPosition: (pos: Position) => void;
   registerPreviousPosition: (pos: Position) => void;
   clearScreen: () => void;
-  switchTool: (tool: "brush" | "eraser") => void;
+  switchLineType: (lineType: LineTypes) => void;
+  switchTool: (tool: ToolTypes) => void;
+  currentTool: ToolTypes;
   draw: (pos: Position) => void;
 };
 
@@ -28,7 +30,6 @@ type CanvaContextProviderProps = {
 export type lineConfigType = {
   width: number;
   color: string;
-  dashed: boolean;
 };
 
 export const CanvaContext = createContext({} as CanvaContextData);
@@ -37,13 +38,13 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
   const [lineConfig, setLineConfig] = useState<lineConfigType>({
     width: 10,
     color: "black",
-    dashed: false,
   });
   const [screen, setScreen] = useState<Canvas>();
-  const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
+  const [currentLineType, setCurrentLineType] = useState<LineTypes>("normal");
+  const [currentTool, setCurrentTool] = useState<ToolTypes>("brush");
 
   useEffect(() => {
-    screen?.configLine(lineConfig.width, lineConfig.color, lineConfig.dashed);
+    screen?.configLine(lineConfig.width, lineConfig.color);
   }, [screen, lineConfig]);
 
   function createCanvas(canvasElement: HTMLCanvasElement) {
@@ -74,17 +75,39 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
     screen.clearCanvas();
   }
 
-  function switchTool(tool: "brush" | "eraser") {
+  function switchLineType(lineType: LineTypes) {
+    setCurrentLineType(lineType);
+  }
+
+  function switchTool(tool: ToolTypes) {
     setCurrentTool(tool);
   }
 
   function draw(pos: Position) {
+    switch (currentLineType) {
+      case "normal":
+        screen?.setNormalLine();
+        break;
+      case "dashed":
+        screen?.setDashedLine();
+        break;
+      default:
+        screen?.setNormalLine();
+        break;
+    }
+
     switch (currentTool) {
       case "brush":
         screen?.drawStandardLine(pos);
         break;
       case "eraser":
         screen?.eraser(pos);
+        break;
+      case "circle":
+        screen?.drawCircle(pos);
+        break;
+      case "rectangle":
+        screen?.drawRectangle(pos);
         break;
       default:
         screen?.drawStandardLine(pos);
@@ -103,7 +126,9 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
         registerStartPosition,
         registerPreviousPosition,
         clearScreen,
+        switchLineType,
         switchTool,
+        currentTool,
         draw,
       }}
     >

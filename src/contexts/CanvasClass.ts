@@ -1,31 +1,31 @@
 import { Position } from "../types/types";
+import { Mixin } from "ts-mixer";
 
-export class Canvas {
+class CanvasBasis {
   ctx: CanvasRenderingContext2D;
   startPosition: Position = { x: 0, y: 0 };
   endPosition: Position = { x: 0, y: 0 };
   previousPosition: Position = { x: 0, y: 0 };
   size: { width: number; height: number } = { width: 0, height: 0 };
   backgroundColor: string = "#fff";
+  color: string = "#000000";
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
   }
 
-  configLine(width: number, color: string, dashed?: boolean) {
+  configLine(width: number, color: string) {
     this.ctx.lineWidth = width;
     this.ctx.strokeStyle = color;
-    if (dashed) {
-      this.ctx.setLineDash([5, 15]);
-    } else {
-      this.ctx.setLineDash([]);
-    }
+    this.color = color;
   }
 
   savePreviousPosition({ x, y }: Position) {
     this.previousPosition = { x, y };
   }
+}
 
+class CanvasTools extends CanvasBasis {
   clearCanvas() {
     this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.size.width, this.size.height);
@@ -38,6 +38,7 @@ export class Canvas {
     this.drawStandardLine({ x, y });
     this.ctx.closePath();
 
+    this.ctx.strokeStyle = this.color;
     this.savePreviousPosition({ x, y });
   }
 
@@ -92,4 +93,26 @@ export class Canvas {
 
     this.savePreviousPosition({ x, y });
   }
+
+  drawRectangle({ x, y }: Position) {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = this.ctx.strokeStyle;
+    this.ctx.rect(x, y, this.ctx.lineWidth, this.ctx.lineWidth);
+    this.ctx.fill();
+    this.ctx.closePath();
+
+    this.savePreviousPosition({ x, y });
+  }
 }
+
+class CanvasLineTypes extends CanvasBasis {
+  setNormalLine() {
+    this.ctx.setLineDash([]);
+  }
+
+  setDashedLine() {
+    this.ctx.setLineDash([5, 15]);
+  }
+}
+
+export class Canvas extends Mixin(CanvasTools, CanvasLineTypes) {}

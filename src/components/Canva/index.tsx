@@ -8,14 +8,7 @@ export default function Canva() {
   const [size, setSize] = useState({ width: 0, height: 0 });
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvasContainerElement = useRef<HTMLDivElement>(null);
-  const {
-    createCanvas,
-    screen,
-    registerEndPosition,
-    registerStartPosition,
-    registerPreviousPosition,
-    draw,
-  } = useCanva();
+  const { createCanvas, screen, draw } = useCanva();
 
   function configResizeCanvas() {
     const container = canvasContainerElement.current;
@@ -54,8 +47,10 @@ export default function Canva() {
       y: e.clientY,
     });
     if (!screen) return;
-    registerStartPosition(currentPosition);
-    registerPreviousPosition(currentPosition);
+    screen.click.hold = true;
+    screen.click.positions.start = currentPosition;
+    screen.hover.positions.previous = currentPosition;
+    draw(currentPosition);
   }
 
   function EndClick(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
@@ -64,18 +59,21 @@ export default function Canva() {
       x: e.clientX,
       y: e.clientY,
     });
-    registerEndPosition(currentPosition);
+    if (!screen) return;
+    screen.click.hold = false;
+    screen.click.positions.end = currentPosition;
+    draw(currentPosition);
   }
 
   function HoldingClick(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     if (!hold) return;
     const canvas = e.currentTarget;
-    const { x, y } = getMousePositionRelativeTo(canvas, {
+    const currentPosition = getMousePositionRelativeTo(canvas, {
       x: e.clientX,
       y: e.clientY,
     });
 
-    draw({ x, y });
+    draw(currentPosition);
   }
 
   return (

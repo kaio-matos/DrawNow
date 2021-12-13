@@ -13,9 +13,6 @@ type CanvaContextData = {
   setLineConfig: React.Dispatch<React.SetStateAction<lineConfigType>>;
   createCanvas: (canvasElement: HTMLCanvasElement) => void;
   screen: Canvas | undefined;
-  registerEndPosition: (pos: Position) => void;
-  registerStartPosition: (pos: Position) => void;
-  registerPreviousPosition: (pos: Position) => void;
   clearScreen: () => void;
   switchLineType: (lineType: LineTypes) => void;
   switchTool: (tool: ToolTypes) => void;
@@ -51,28 +48,13 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
     const ctx = canvasElement.getContext("2d");
     if (!ctx) return;
 
-    const screen = new Canvas(ctx);
+    const screen = new Canvas(canvasElement, ctx);
     setScreen(screen);
-  }
-
-  function registerStartPosition(pos: Position) {
-    if (!screen) return;
-    screen.startPosition = pos;
-  }
-
-  function registerEndPosition(pos: Position) {
-    if (!screen) return;
-    screen.endPosition = pos;
-  }
-
-  function registerPreviousPosition(pos: Position) {
-    if (!screen) return;
-    screen.savePreviousPosition(pos);
   }
 
   function clearScreen() {
     if (!screen) return;
-    screen.clearCanvas();
+    screen.deleteCanvas();
   }
 
   function switchLineType(lineType: LineTypes) {
@@ -122,9 +104,6 @@ export function CanvaContextProvider({ children }: CanvaContextProviderProps) {
         setLineConfig,
         createCanvas,
         screen,
-        registerEndPosition,
-        registerStartPosition,
-        registerPreviousPosition,
         clearScreen,
         switchLineType,
         switchTool,
